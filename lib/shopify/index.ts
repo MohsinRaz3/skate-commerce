@@ -59,7 +59,7 @@ const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
 type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never;
 
 export async function shopifyFetch<T>({
-  cache = 'force-cache',
+  cache = 'no-cache',
   headers,
   query,
   tags,
@@ -448,3 +448,22 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
 
   return NextResponse.json({ status: 200, revalidated: true, now: Date.now() });
 }
+
+export async function getMetaObjects() {
+  const query = `
+  query MyQuery {
+    metaobject(handle: {handle: "test-object", type: "test"}) {
+      handle
+      type
+      id
+      field(key: "name") {
+        type
+        value
+      }
+    }
+  }
+    `
+  const res = await shopifyFetch<any>({ query })
+  return res
+}
+
