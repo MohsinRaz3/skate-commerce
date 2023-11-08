@@ -467,3 +467,32 @@ export async function getMetaObjects() {
   return res
 }
 
+export async function getShopifyMetaObjects() {
+
+  const query = `
+  query MyHomeDefinitionQuery {
+    metaobject(handle: {handle: "banner-slider", type: "homepage_def"}) {
+      fields {
+        value
+        type
+        reference {
+          ... on MediaImage {
+            id
+            image {
+              url
+            }
+            alt
+          }
+        }
+        key
+      }
+    }
+  }`
+
+  const res = await shopifyFetch<any>({ query, cache: "no-cache" })
+  if (res.status == 200) {
+    return res.body
+  } else {
+    console.error("MetaObjects not found")
+  }
+}
